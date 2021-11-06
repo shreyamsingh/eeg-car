@@ -1,9 +1,6 @@
 import mne
 import pandas as pd
-# import picard as picard
 from mne.preprocessing import ICA
-from mne.time_frequency import stft
-from scipy.fft import fft, ifft
 
 # load data
 data = pd.read_csv("data/right_wink.csv", skiprows=0, usecols=[*range(3, 8)])
