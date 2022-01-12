@@ -24,7 +24,7 @@ data = {}  # time: [metric values (ordered)]
 def filter_handler(address, *args):
     print(f"{address}: {args}")
     curr = time.process_time() - start
-    print(curr)
+    # print(curr)
     # add time + metric value to data
     if curr not in data:
         data[curr] = [0 for i in range(num)]
@@ -36,7 +36,7 @@ def filter_handler(address, *args):
     if curr > 0.5:
         # columns: time, metrics
         df = pd.DataFrame.from_dict(data, orient='index', columns=metrics)
-        df.to_csv('data/blink_110521.csv')
+        df.to_csv('data/push_112421_04.csv')
         exit()
 
 
