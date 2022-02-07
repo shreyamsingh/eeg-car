@@ -11,7 +11,6 @@ IP_DEFAULT = "127.0.0.1"
 
 # open serial port
 # to find arduino port, go to tools > port
-# capitalization doesn't matter
 ser = serial.Serial(port='COM3', baudrate=9600, timeout=.1)
 
 start = time.process_time()
@@ -27,26 +26,24 @@ lookup = {val:idx for idx, val in enumerate(metrics)}
 data = {}  # time: [metric values (ordered)]
 
 
-def filter_handler(address, *args):
-    print(f"{address}: {args}")
-    curr = time.process_time() - start
-    # print(curr)
+def write(address):
+    if address in {"/fac/uAct/frown", "/com/push"}:
+        ser.write(b'f')  # forward
+    elif address in {"/fac/lAct/clench", "/com/drop"}:
+        ser.write(b'b')  # backward
+    elif address in {"/fac/eyeAct/lookL", "/com/left"}:
+        ser.write(b'l')  # left
+    elif address in {"/fac/eyeAct/lookR", "/com/right"}:
+        ser.write(b'r')  # right
+    elif address in {"/fac/uAct/surprise", "/com/pull"}:
+        ser.write(b's')  # stop
 
-    # algorithm
-    # NEED TO FIX!!!
-    if address == "":
-        ser.write(b'F')  # forward
-    if address == "":
-        ser.write(b'B')  # backward
-    if address == "":
-        ser.write(b'L')  # left
-    if address == "":
-        ser.write(b'R')  # right
-    if address == "":
-        ser.write(b'S')  # stop
+
+def filter_handler(address, *args):
+    curr = time.process_time() - start
+    print(f"{time}:{address}:{args}")
 
     # add time + metric value to data
-    # eventually not needed
     if curr not in data:
         data[curr] = [0 for i in range(num)]
     val = args
@@ -54,13 +51,14 @@ def filter_handler(address, *args):
         val = val[0]
     data[curr][lookup[address]] = val
 
-    # recording done, export data to csv
-    # eventually not needed
-    if curr > 0.5:
-        # columns: time, metrics
-        df = pd.DataFrame.from_dict(data, orient='index', columns=metrics)
-        df.to_csv('data/push_112421_04.csv')
-        exit()
+    # threshold classification algorithm
+    threshold = 0.6
+    if val > threshold:
+        write(address, curr)
+
+    # write data to csv - columns: time, metrics
+    df = pd.DataFrame.from_dict(data, orient='index', columns=metrics)
+    df.to_csv('data/push_112421_04.csv')
 
 
 if __name__ == "__main__":
