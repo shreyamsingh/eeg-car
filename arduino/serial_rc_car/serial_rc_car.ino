@@ -17,10 +17,14 @@
 
 // constants won't change. They're used here to
 // set pin numbers:
-const int UpPin =  11;      // The pin used to control the forward move
-const int DwnPin =  10;      // The pin used to control the backward move
-const int RghtPin =  13;      // The pin used to control the right move
-const int LftPin =  12;      // The pin used to control the left move
+const int UpPin =  13;      // The pin used to control the forward move
+const int DwnPin =  12;      // The pin used to control the backward move
+const int RghtPin =  10;      // The pin used to control the right move
+const int LftPin =  11;      // The pin used to control the left move
+bool forward = false;
+bool backward = false;
+bool left = false;
+bool right = false;
 
 int CommandByte = 0;   // Command received via serial port
 
@@ -46,51 +50,90 @@ if (Serial.available() > 0)
       // Perform the commands
 
       // Forward command is received
-      if (CommandByte == 'F') 
+      if (CommandByte == 'f') 
         {
           // First be sure that Down button (go back) is unpressed, then send forward command
           digitalWrite(DwnPin, LOW);  // Stop backward
+          backward = false;
+          // Don't turn
+          digitalWrite(LftPin, LOW); // stop left
+          digitalWrite(RghtPin, LOW); // stop right
+          left = false;
+          right = false;
+          // Move forward
           digitalWrite(UpPin, HIGH); // Go forward
+          forward = true;
         }
-        
-      // delay(500);                  // waits for 500 m.seconds
 
           // Backward command is received
-            if (CommandByte == 'B') 
+            if (CommandByte == 'b') 
         {
           // First be sure that Up button (go forward) is unpressed, then send backward command
           digitalWrite(UpPin, LOW); // Stop forward
+          forward = false;
+          // Don't turn
+          digitalWrite(LftPin, LOW); // stop left
+          digitalWrite(RghtPin, LOW); // stop right
+          left = false;
+          right = false;
+          // Move backward
           digitalWrite(DwnPin, HIGH); // Go backward
-          
+          backward = true;
         }
 
          // Go right command is received
-            if (CommandByte == 'R') 
+            if (CommandByte == 'r') 
         {
-          // First be sure that Left button is unpressed, then send right command
-          digitalWrite(LftPin, LOW); // Stop turning left
-          digitalWrite(RghtPin, HIGH);  // Turn right
-          
+          // Stop left
+          digitalWrite(LftPin, LOW);
+          left = false;
+          // If not already moving, go forward & right
+          if (!backward && !forward){
+            digitalWrite(UpPin, HIGH);
+            digitalWrite(RghtPin, HIGH);
+            forward = true;
+            right = true;
+          }
+          // If already moving, turn wheels right
+          else{
+            digitalWrite(RghtPin, HIGH);
+            right = true;
+          }
         }
 
         // Go left command is received
-            if (CommandByte == 'L') 
+            if (CommandByte == 'l') 
         {
-          // First be sure that right button is unpressed, then send left command
-          digitalWrite(RghtPin, LOW); // Stop turning right
-          digitalWrite(LftPin, HIGH); // Turn left
-          
+          // Stop right
+          digitalWrite(RghtPin, LOW);
+          right = false;
+          // If not already moving, go forward and left
+          if (!backward && !forward){
+            digitalWrite(UpPin, HIGH);
+            digitalWrite(LftPin, HIGH);
+            forward = true;
+            left = true;
+          }
+          // If already moving, turn wheels left
+          else{
+            digitalWrite(LftPin, HIGH);
+            left = true;
+          }
         }
 
 
         // Stop command is received
-            if (CommandByte == 'S') 
+            if (CommandByte == 's') 
         {
           // Stop everything
           digitalWrite(UpPin, LOW); // Stop forward
           digitalWrite(DwnPin, LOW); // Stop backward
           digitalWrite(RghtPin, LOW); // Stop turning right
           digitalWrite(LftPin, LOW); // Stop turning left
+          forward = false;
+          backward = false;
+          left = false;
+          right = false;
           
         }        
 
