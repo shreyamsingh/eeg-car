@@ -17,10 +17,10 @@
 
 // constants won't change. They're used here to
 // set pin numbers:
-const int UpPin =  13;      // The pin used to control the forward move
-const int DwnPin =  12;      // The pin used to control the backward move
-const int RghtPin =  10;      // The pin used to control the right move
-const int LftPin =  11;      // The pin used to control the left move
+const int UpPin =  11;      // The pin used to control the forward move
+const int DwnPin =  10;      // The pin used to control the backward move
+const int RghtPin =  13;      // The pin used to control the right move
+const int LftPin =  12;      // The pin used to control the left move
 bool forward = false;
 bool backward = false;
 bool left = false;
