@@ -31,7 +31,7 @@ app.layout = html.Div(children=[
          html.Button('Right', id='right', n_clicks=0),
          html.Button('Forward', id='forward', n_clicks=0),
          html.Button('Backward', id='backward', n_clicks=0),
-         html.button('Stop', id='stop', n_clicks=0),
+         html.Button('Stop', id='stop', n_clicks=0),
          html.Div(id='car-controls')
       ])
    ])
