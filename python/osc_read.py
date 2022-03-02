@@ -8,7 +8,10 @@ from pythonosc import osc_server
 PORT_NUMBER = 8000
 IP_DEFAULT = "127.0.0.1"
 
+global start
 start = time.process_time()
+temp_start = time.process_time()
+
 metrics = ["/fac/eyeAct/lookL", "/fac/eyeAct/lookR", "/fac/eyeAct/blink", "/fac/eyeAct/winkL", "/fac/eyeAct/winkR",
            "/fac/uAct/neutral", "/fac/uAct/frown", "/fac/uAct/surprise", "/fac/lAct/neutral", "/fac/lAct/clench",
            "/fac/lAct/laugh", "/fac/lAct/smile", "/fac/lAct/smirkLeft", "/fac/lAct/smirkRight", "/com/neutral",
@@ -19,12 +22,15 @@ metrics = ["/fac/eyeAct/lookL", "/fac/eyeAct/lookR", "/fac/eyeAct/blink", "/fac/
 num = len(metrics)
 lookup = {val:idx for idx, val in enumerate(metrics)}
 data = {}  # time: [metric values (ordered)]
+with open('data.csv', 'a') as f:
+   f.write('time,{}\n'.format(','.join(metrics)))
 
 
 def filter_handler(address, *args):
-    print(f"{address}: {args}")
+    global start,temp_start
+    #print(f"{address}: {args}")
     curr = time.process_time() - start
-    # print(curr)
+    #print(curr)
     # add time + metric value to data
     if curr not in data:
         data[curr] = [0 for i in range(num)]
@@ -32,13 +38,25 @@ def filter_handler(address, *args):
     while not isinstance(val, int) and not isinstance(val, float):
         val = val[0]
     data[curr][lookup[address]] = val
-    # recording done, export data to csv
-    if curr > 0.5:
+
+   # recording done, export data to csv
+    if time.process_time()-temp_start > 0.05:
         # columns: time, metrics
         df = pd.DataFrame.from_dict(data, orient='index', columns=metrics)
-        df.to_csv('data/push_112421_04.csv')
-        exit()
-
+        with open('data.csv', 'a') as f:
+            f.write(f'{curr},')
+            f.write(','.join([str(x) for x in list(df.iloc[-1])]))
+            f.write('\n')
+        print('written')
+        temp_start = time.process_time()
+        #print('done')
+        #exit()
+def shrek_get_sleep():
+    global start
+    start = time.process_time()
+def get_data(address, dispatcher):
+   dispatcher.map(address, filter_handler)
+   
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
