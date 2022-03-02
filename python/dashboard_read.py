@@ -64,9 +64,9 @@ def update_graph(n, value):
    Input('backward', 'n_clicks'),
    Input('stop', 'n_clicks')
 )
-def update_car_controls(left, right, forward, backward):
+def update_car_controls(left, right, forward, backward, stop):
    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
-   #print(changed_id[:-9])
+   print(changed_id[0])
    ser.write(changed_id[0].encode())
 
 if __name__ == '__main__':
