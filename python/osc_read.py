@@ -36,7 +36,7 @@ def filter_handler(address, *args):
          while not isinstance(val, int) and not isinstance(val, float):
             val = val[0]
          if address == metrics[-1]:
-            f.write(f'{val}\n')
+            f.write(f'{val}\n{time.process_time() - start},')
          else:
             f.write(f'{val},')
 
