@@ -1,16 +1,17 @@
-# run with write_to_file.py
 import dash
 from dash import dcc
 from dash import html, callback_context
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
-import serial
 
 app = dash.Dash(__name__)
 #df = pd.read_csv('eeg-car/melissa_push.csv')
 df = pd.read_csv('data.csv')
-ser = serial.Serial(port='COM3', baudrate=9600, timeout=.1)
+
+# serial.csv holds serial port messages
+with open('serial.csv', 'w') as f_msg:
+   f_msg.write('msg\ns\n')
 
 app.layout = html.Div(children=[
    html.H1('EEG DATA'),
@@ -66,8 +67,11 @@ def update_graph(n, value):
 )
 def update_car_controls(left, right, forward, backward, stop):
    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
-   print(changed_id[0])
-   ser.write(changed_id[0].encode())
+   # print(changed_id[0])
+   # write message to serial.csv to be sent to serial port
+   with open('serial.csv', 'a') as f_msg:
+      f_msg.write(changed_id[0] + '\n')
+
 
 if __name__ == '__main__':
    app.run_server(debug=True)

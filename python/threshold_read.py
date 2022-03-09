@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from time import sleep
-#import serial
 
 idx = 0
 LEFT = 'l'
@@ -10,7 +9,9 @@ FORWARD = 'f'
 STOP = 's'
 REVERSE = 'b'
 
-#ser = serial.Serial(port='COM3', baudrate=9600, timeout=.1)
+# serial.csv holds serial port messages
+with open('serial.csv', 'w') as f_msg:
+   f_msg.write('msg\ns\n')
 
 command_to_output = {
    '/com/push': FORWARD,
@@ -26,6 +27,7 @@ command_to_output = {
 }
 
 while True:
+   # poll data.csv
    df = pd.read_csv('data.csv')
    n = 3
    if not (idx % 3) and idx > 0:
@@ -42,6 +44,6 @@ while True:
       print(dctChosen)
       if max_mean in command_to_output:
          print(f'{max_mean}: {command_to_output[max_mean]}')
-         #ser.write(command_to_output[max_mean].encode())
+         f_msg.write(command_to_output[max_mean] + '\n')
    sleep(1)
    idx += 1
