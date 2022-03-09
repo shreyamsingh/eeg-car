@@ -22,38 +22,47 @@ metrics = ["/fac/eyeAct/lookL", "/fac/eyeAct/lookR", "/fac/eyeAct/blink", "/fac/
 num = len(metrics)
 lookup = {val:idx for idx, val in enumerate(metrics)}
 data = {}  # time: [metric values (ordered)]
-with open('data.csv', 'a') as f:
+with open('data.csv', 'w') as f:
    f.write('time,{}\n'.format(','.join(metrics)))
 
 
 def filter_handler(address, *args):
     global start,temp_start
-    #print(f"{address}: {args}")
-    curr = time.process_time() - start
-    #print(curr)
-    # add time + metric value to data
-    if curr not in data:
-        data[curr] = [0 for i in range(num)]
-    val = args
-    while not isinstance(val, int) and not isinstance(val, float):
-        val = val[0]
-    data[curr][lookup[address]] = val
+   #  if address == '/fac/uAct/surprise':
+   #    print(f"{address}: {args}")
+   #  curr = time.process_time() - start
+   #  #print(curr)
+   #  # add time + metric value to data
+   #  if curr not in data:
+   #      data[curr] = [0 for i in range(num)]
+   #      print(curr, end=',')
+   #  val = args
+   #  while not isinstance(val, int) and not isinstance(val, float):
+   #      val = val[0]
+   #  data[curr][lookup[address]] = val
 
-   # recording done, export data to csv
-    if time.process_time()-temp_start > 0.05:
-        # columns: time, metrics
-        df = pd.DataFrame.from_dict(data, orient='index', columns=metrics)
-        with open('data.csv', 'a') as f:
-            f.write(f'{curr},')
-            f.write(','.join([str(x) for x in list(df.iloc[-1])]))
-            f.write('\n')
-        print('written')
-        temp_start = time.process_time()
-        #print('done')
-        #exit()
-def shrek_get_sleep():
-    global start
-    start = time.process_time()
+   #  # append csv
+   #  #if time.process_time()-temp_start > 0.05:
+   #  if address == metrics[-1]:
+   #    # columns: time, metrics
+   #    df = pd.DataFrame.from_dict(data, orient='index', columns=metrics)
+   #    with open('data.csv', 'a') as f:
+   #       f.write(f'{curr},')
+   #       f.write(','.join([str(x) for x in list(df.iloc[-1])]))
+   #       f.write('\n')
+   #    print('written')
+   #    temp_start = time.process_time()
+   #    #print('done')
+   #    #exit()
+    with open('data.csv', 'a') as f:
+         val = args
+         while not isinstance(val, int) and not isinstance(val, float):
+            val = val[0]
+         if address == metrics[-1]:
+            f.write(f'{val}\n')
+         else:
+            f.write(f'{val},')
+
 def get_data(address, dispatcher):
    dispatcher.map(address, filter_handler)
    
