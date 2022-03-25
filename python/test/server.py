@@ -17,4 +17,4 @@ for idx in df.index:
          client.send_message(row, float(df.loc[idx, row]))   # Send float message
    print(idx)
    print(df.loc[idx, '/fac/uAct/surprise'])
-   sleep(4)
+   sleep(1)

@@ -46,6 +46,7 @@ void loop() {
 if (Serial.available() > 0) 
     {
       // Read the incoming byte:
+      long clocktime = millis();
       CommandByte = Serial.read();
       // Perform the commands
 
@@ -63,6 +64,7 @@ if (Serial.available() > 0)
           // Move forward
           digitalWrite(UpPin, HIGH); // Go forward
           forward = true;
+          Serial.print('f' + clocktime);
         }
 
           // Backward command is received

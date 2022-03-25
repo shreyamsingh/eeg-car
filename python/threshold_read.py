@@ -44,6 +44,7 @@ while True:
       print(dctChosen)
       if max_mean in command_to_output:
          print(f'{max_mean}: {command_to_output[max_mean]}')
-         f_msg.write(command_to_output[max_mean] + '\n')
-   sleep(1)
+         with open('serial.csv', 'a') as f_msg:
+            f_msg.write(command_to_output[max_mean] + '\n')
+   sleep(0.01)
    idx += 1
