@@ -135,7 +135,35 @@ if (Serial.available() > 0)
           left = false;
           right = false;
           
-        }        
+        }     
+        
+        // slow down
+           if (CommandByte == 'd')
+           {
+            // stop turn
+            digitalWrite(RghtPin, LOW);
+            digitalWrite(LftPin, LOW);
+            right = false;
+            left = false;
+            if (forward){
+              for(int i = 0; i < 5; i++){
+                digitalWrite(UpPin, HIGH);
+                delay(250);
+                digitalWrite(UpPin, LOW);
+                delay(500);
+              }
+              forward = false;
+            }
+            if (backward){
+              for(int i = 0; i < 5; i++){
+                digitalWrite(DwnPin, HIGH);
+                delay(250);
+                digitalWrite(DwnPin, LOW);
+                delay(1000);
+              }
+              backward = false;
+            }
+           }
 
        delay(1000);                  // waits for a second
     }
